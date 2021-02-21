@@ -15,7 +15,7 @@
 
     # Modules
     ../../modules/docker.nix
-    ../../modules/networking.nix
+    # ../../modules/networking.nix
     ../../modules/locale.nix
     ../../modules/hosts.nix
     ../../modules/openssh.nix
@@ -29,6 +29,12 @@
 
   networking = {
     hostName = "the-bus";
+    useDHCP = false;
+    interfaces = {
+      eno1.useDHCP = true;
+      br0.useDHCP = true;
+    };
+    bridges = { "br0" = { interfaces = [ "eno1" ]; }; };
   };
 
   boot = {
