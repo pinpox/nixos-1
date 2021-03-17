@@ -5,6 +5,8 @@
 
   config = {
 
+  networking = { hostName = "netcup"; };
+
     services.qemuGuest.enable = true;
 
 
