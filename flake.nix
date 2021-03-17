@@ -51,9 +51,7 @@
         ./users/root.nix
         { home-manager.users.nik = nixos-home.nixosModules.server; }
         ./modules/docker.nix
-        ./modules/grub.nix
         ./modules/nix-common.nix
-        ./modules/networking.nix
         ./modules/locale.nix
         ./modules/hosts.nix
         ./modules/openssh.nix
@@ -107,8 +105,19 @@
             ./modules/containers/scene-extractor-AOS.nix
             ./modules/containers/plex-version.nix
             ./modules/containers/in-stock.nix
+            ./modules/grub.nix
+            ./modules/networking.nix
           ];
         };
+
+        netcup = defFlakeSystem {
+          imports = base-modules-server ++ [
+            # Machine specific config
+            ./machines/netcup/configuration.nix
+
+          ];
+        };
+
 
         the-bus = defFlakeSystem {
           imports = base-modules-server ++ [

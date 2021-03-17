@@ -44,6 +44,7 @@ in rec {
   water-on-fire = createHost "water-on-fire" "root@192.168.5.63";
   quinjet = createHost "quinjet" "root@192.168.5.11";
   the-bus = createHost "the-bus" "root@192.168.5.12";
+  netcup = createHost "netcup" "root@202.61.248.235";
 
   # Groups
   all = pkgs.writeScript "deploy-all"
