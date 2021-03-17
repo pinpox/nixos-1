@@ -1,8 +1,12 @@
+
 { config, pkgs, lib, modulesPath, ... }: {
 
   imports = [ "${modulesPath}/profiles/qemu-guest.nix" ];
 
   config = {
+
+    services.qemuGuest.enable = true;
+
 
     fileSystems."/" = {
       device = "/dev/disk/by-label/nixos";
@@ -14,6 +18,14 @@
     boot.kernelParams = [ "console=ttyS0" ];
     boot.loader.grub.device = "/dev/vda";
     boot.loader.timeout = 0;
+
+    environment.systemPackages = with pkgs; [
+      git
+      htop
+      nixfmt
+      wget
+    ];
+
 
     mainUser = "nik";
     mainUserHome = "${config.users.extraUsers.${config.mainUser}.home}";
