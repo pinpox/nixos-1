@@ -56,11 +56,11 @@ type: docker
 name: build cache
 
 steps:
-- name: Build hosts
+- name: Build quinjet
   image: nixpkgs/nix-flakes
   commands:
   - nix flake update
-  - nix build --profile result '.#nixosConfigurations.water-on-fire.config.system.build.toplevel' -j 8 max-jobs 3
+  - nix build --profile result '.#nixosConfigurations.quinjet.config.system.build.toplevel' -j 8 max-jobs 8
   environment:
     NIX_PATH: nixpkgs=channel:nixos-unstable
 
