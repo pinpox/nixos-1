@@ -64,14 +64,6 @@ steps:
   environment:
     NIX_PATH: nixpkgs=channel:nixos-unstable
 
-- name: finished building
-  image: nixpkgs/nix-flakes
-  commands:
-  - echo "finished building"
-  depends_on:
-  - Build water-on-fire
-  - Build quinjet
-
 ---
 kind: pipeline
 name: flake update
