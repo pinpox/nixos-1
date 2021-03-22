@@ -60,7 +60,7 @@ steps:
   image: nixpkgs/nix-flakes
   commands:
   - nix flake update
-  - nix build --profile result '.#nixosConfigurations.all.config.system.build.toplevel' -j 8
+  - nix build --profile result '.#nixosConfigurations.quinjet.config.system.build.toplevel' -j 8
   environment:
     NIX_PATH: nixpkgs=channel:nixos-unstable
 
