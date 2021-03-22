@@ -60,7 +60,7 @@ steps:
   image: nixpkgs/nix-flakes
   commands:
   - nix flake update
-  - nix build --profile result '.#nixosConfigurations.all.config.system.build.toplevel' -j 8 max-jobs 3
+  - nix build --profile result '.#nixosConfigurations.water-on-fire.config.system.build.toplevel' -j 8 max-jobs 3
   environment:
     NIX_PATH: nixpkgs=channel:nixos-unstable
 
