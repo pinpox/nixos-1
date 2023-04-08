@@ -1,96 +1,32 @@
-{ self, config, pkgs, nixpkgs-unstable, ... }: {
+{ self, config, pkgs, ... }:
 
-  imports = [
+let
+  caddy-with-plugins = pkgs.caddy.override {
+    buildGoModule = args: pkgs.buildGoModule (args // {
+      # vendorSha256 = "sha256-445MYvi487ls6g6i30UTTK2/n2wbILgJEuwNUQE//ZE";
+      patches = [ ./caddy.patch ];
+      vendorHash = "sha256-rgbHvCX3lf5oKSCmkUjdhFtITFUMysC5dn5fhvSyYco=";
+      runVend = true;
 
-    "${nixpkgs-unstable}/nixos/modules/services/security/authelia.nix"
-
-    {
-      nixpkgs.overlays = [
-        (self: super: {
-          authelia = nixpkgs-unstable.legacyPackages.${pkgs.system}.authelia;
-        })
-      ];
-    }
-
-  ];
-
-  ### NOT WORKING YET ###
-  # https://search.nixos.org/options?channel=unstable&query=services.authelia.
-  ### NOT WORKING YET ###
-  services.authelia.instances = {
-    main = {
-      enable = true;
-      package = pkgs.authelia;
-      settings = {
-        theme = "dark";
-        server = {
-          host = "0.0.0.0";
-          port = 9091;
-        };
-
-        authentication_backend = {
-          file.path = "/var/lib/authelia-main/user.yml";
-        };
-
-        storage.local.path = "/var/lib/authelia-main/db.sqlite";
-
-        session = {
-          secret = "this-is-just-a-test-secret";
-          domain = "authelia.lounge.rocks";
-          expiration = 3600; # 1 hour
-          inactivity = 300; # 5 minutes
-        };
-        # redis:
-        #   host: redis
-        #   port: 6379
-
-        notifier.filesystem.filename = "/var/lib/authelia-main/emails.txt";
-
-        access_control = {
-          default_policy = "bypass";
-          rules = [
-            {
-              domain = "public.example.com";
-              policy = "bypass";
-            }
-            {
-              domain = "traefik.example.com";
-              policy = "one_factor";
-            }
-          ];
-        };
-      };
-      secrets = {
-        storageEncryptionKeyFile = "/etc/authelia/storageEncryptionKeyFile";
-        jwtSecretFile = "/etc/authelia/jwtSecretFile";
-      };
-    };
+    });
   };
+in
+{
 
 
   # server also runs keycloak for evaluation purposes
   mayniklas.keycloak.enable = true;
-  mayniklas.nginx.enable = true;
+
+  mayniklas.nginx.enable = false;
+  services.nginx.enable = false;
 
 
+  environment.systemPackages = [ caddy-with-plugins ];
 
-  services.nginx.virtualHosts = {
-    "authelia.lounge.rocks" = {
-      enableACME = true;
-      forceSSL = true;
-      locations = {
-        "/" = {
-          proxyPass = "http://127.0.0.1:9091";
-          # extraConfig = ''
-          #   proxy_set_header X-Forwarded-Host $http_host;
-          #   proxy_set_header X-Real-IP $remote_addr;
-          #   proxy_set_header X-Forwarded-Proto $scheme;
-          # '';
-        };
-      };
-    };
+  services.caddy = {
+    enable = true;
+    package = caddy-with-plugins;
   };
-
 
   users.users.root = {
     openssh.authorizedKeys.keyFiles = [
