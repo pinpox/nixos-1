@@ -10,6 +10,21 @@ let
 
     });
   };
+  static-site = pkgs.writeTextFile {
+    name = "index.html";
+    text = ''
+      <!DOCTYPE html>
+      <html>
+        <head> <meta charset="UTF-8"> </head>
+        <body>
+        <h1>Hello World!</h1>
+        <p>Greetings, humans</p>
+        </body>
+      </html>
+    '';
+    executable = false;
+    destination = "/html/index.html";
+  };
 in
 {
 
@@ -26,6 +41,15 @@ in
   services.caddy = {
     enable = true;
     package = caddy-with-plugins;
+    virtualHosts = {
+      "static-site.lounge.rocks" = {
+        extraConfig = ''
+          encode gzip
+          root * ${static-site}/html
+          file_server
+        '';
+      };
+    };
   };
 
   users.users.root = {
